@@ -1,0 +1,21 @@
+{
+  "name": "login",
+  "version": "0.0.0",
+  "authors": [
+    "seoj <jmseo2@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.4.0",
+    "angular-route": "~1.4.0",
+    "angular-resource": "1.4.x",
+    "bootstrap": "^3.3.6"
+  }
+}

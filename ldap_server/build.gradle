@@ -1,0 +1,21 @@
+group 'security.rest.com'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'application'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+dependencies {
+    compile('com.unboundid:unboundid-ldapsdk:3.1.1')
+}
+mainClassName = "LdapServer"
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.12'
+}
