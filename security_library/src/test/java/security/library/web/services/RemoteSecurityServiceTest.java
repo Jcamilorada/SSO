@@ -57,7 +57,7 @@ public class RemoteSecurityServiceTest
     }
 
     @Test
-    public void logIn() throws Exception
+    public void testLogIn() throws Exception
     {
         String user = "user";
         String password = "password";
@@ -72,7 +72,7 @@ public class RemoteSecurityServiceTest
     }
 
     @Test
-    public void logout() throws Exception
+    public void testLogout() throws Exception
     {
         String token = "token";
 

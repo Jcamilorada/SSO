@@ -5,7 +5,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Created by JUANC on 5/9/16.
+ * Logout request data transfer object.
+ *
+ * @author Juan Rada
  */
 @Data @AllArgsConstructor @NoArgsConstructor
 public class LogoutRequestDTO

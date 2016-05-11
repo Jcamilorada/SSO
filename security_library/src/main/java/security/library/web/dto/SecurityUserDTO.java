@@ -4,7 +4,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Created by JUANC on 5/8/16.
+ * Security user data trasnfer object. Holds use logged user information.
+ *
+ * @author Juan Rada
  */
 @Data @NoArgsConstructor
 public class SecurityUserDTO

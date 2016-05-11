@@ -1,6 +1,5 @@
 package security.library.web.servlet;
 
-import com.google.common.base.Strings;
 import java.io.IOException;
 import java.util.Optional;
 import javax.servlet.Filter;
@@ -14,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
 import lombok.Getter;
+import security.library.web.common.HttpUtil;
 import security.library.web.dto.SecurityUserDTO;
 import security.library.web.services.RemoteSecurityService;
 
@@ -52,11 +52,11 @@ public class SecurityFilter implements Filter
         HttpServletRequest servletRequest = (HttpServletRequest)request;
         HttpServletResponse httpResponse = (HttpServletResponse)response;
 
-        String token = getCookieValue(servletRequest.getCookies());
+        Optional<Cookie> token = HttpUtil.getCookie(servletRequest.getCookies(), SECURITY_COOKIE);
 
-        if (token != null)
+        if (token.isPresent())
         {
-            Optional<SecurityUserDTO> securityUser = securityService.getSecurityUser(token);
+            Optional<SecurityUserDTO> securityUser = securityService.getSecurityUser(token.get().getValue());
 
             if (securityUser.isPresent())
             {
@@ -76,24 +76,5 @@ public class SecurityFilter implements Filter
     public void destroy()
     {
 
-    }
-
-    private String getCookieValue(Cookie[] cookies)
-    {
-        String value = null;
-
-        if (cookies != null)
-        {
-            for (Cookie cookie : cookies)
-            {
-                if (cookie.getName().equalsIgnoreCase(SECURITY_COOKIE) &&
-                        !Strings.isNullOrEmpty(cookie.getValue()))
-                {
-                    value = cookie.getValue();
-                }
-            }
-        }
-
-        return value;
     }
 }

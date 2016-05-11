@@ -18,6 +18,8 @@ dependencies {
     compile('org.springframework:spring-web:4.2.6.RELEASE')
     compile('org.projectlombok:lombok:1.16.8')
     compile('com.google.guava:guava:19.0')
+    compile('org.slf4j:slf4j-api:1.7.21')
+    compile('log4j:log4j:1.2.17')
 
     testCompile('junit:junit:4.12')
     testCompile('org.mockito:mockito-all:1.10.19')
