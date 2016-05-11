@@ -14,7 +14,7 @@ repositories {
 dependencies {
     compile('com.unboundid:unboundid-ldapsdk:3.1.1')
 }
-mainClassName = "LdapServer"
+mainClassName = "ldap.server.LdapServer"
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.12'

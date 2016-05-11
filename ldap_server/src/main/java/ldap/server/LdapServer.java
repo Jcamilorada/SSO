@@ -1,3 +1,5 @@
+package ldap.server;
+
 /**
  * Ldap server class. Start an ldap server listener.
  *
@@ -10,7 +12,7 @@ public class LdapServer
         try
         {
             System.out.println("Runing ldap server");
-            EmbeddedADS.startServer();
+            EmbeddedLdap.startServer();
         }
 
         catch (com.unboundid.ldap.sdk.LDAPException e)

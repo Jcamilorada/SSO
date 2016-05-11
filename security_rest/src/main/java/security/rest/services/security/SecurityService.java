@@ -54,14 +54,14 @@ public class SecurityService
      * @param token the string representation of the security token.
      * @return optional with user information. empty is token is not valid or user does not exist.
      */
-    public Optional<UserInformation> validateToken(String token)
+    public Optional<UserInformation> validateToken(String token, String application)
     {
         Optional<String> user = tokenService.getSecurityUserFromToken(token);
         Optional<UserInformation> userInformation = Optional.empty();
 
         if (user.isPresent())
         {
-            userInformation = LdapUtil.getUserInformation(user.get());
+            userInformation = LdapUtil.getUserInformation(user.get(), application);
         }
 
         return userInformation;

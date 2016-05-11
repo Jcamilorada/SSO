@@ -49,10 +49,11 @@ public class RemoteSecurityService
      * is found otherwise empty. Perform an Http request to configured security server.
      *
      * @param token the security Token.
+     * @param application the application name to retrieve user roles.
      *
      * @return an optional instance of {@link SecurityUserDTO} if user is found otherwise empty.
      */
-    public Optional<SecurityUserDTO> getSecurityUser(String token)
+    public Optional<SecurityUserDTO> getSecurityUser(String token, String application)
     {
         Preconditions.checkNotNull(token);
 
@@ -61,7 +62,9 @@ public class RemoteSecurityService
         try
         {
             userDTO = Optional.of(restTemplate.postForObject(
-                    securityServerUrl + VALIDATE_PATH, new TokenValidationRequestDTO(token), SecurityUserDTO.class));
+                    securityServerUrl + VALIDATE_PATH,
+                    new TokenValidationRequestDTO(token, application),
+                    SecurityUserDTO.class));
         }
 
         catch (HttpClientErrorException ex)

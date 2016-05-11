@@ -26,6 +26,7 @@ public class SecurityServiceTest
     private String user = "user";
     private String password = "password";
     private String token = "token";
+    private String application = "application";
 
     @Mock private LdapUtil ldapUtil;
     @Mock private TokenService tokenService;
@@ -56,7 +57,7 @@ public class SecurityServiceTest
     public void validateTokenWhenNoRegister() throws Exception
     {
         when(tokenService.getSecurityUserFromToken(token)).thenReturn(Optional.empty());
-        assertThat(testInstance.validateToken(token), is(Optional.empty()));
+        assertThat(testInstance.validateToken(token, application), is(Optional.empty()));
     }
 
     @Test
@@ -64,9 +65,9 @@ public class SecurityServiceTest
     {
         UserInformation userInformation = new UserInformation();
         when(tokenService.getSecurityUserFromToken(token)).thenReturn(Optional.of(user));
-        when(ldapUtil.getUserInformation(user)).thenReturn(Optional.of(userInformation));
+        when(ldapUtil.getUserInformation(user, application)).thenReturn(Optional.of(userInformation));
 
-        assertThat(testInstance.validateToken(token), is(Optional.of(userInformation)));
+        assertThat(testInstance.validateToken(token, application), is(Optional.of(userInformation)));
     }
 
     @Test

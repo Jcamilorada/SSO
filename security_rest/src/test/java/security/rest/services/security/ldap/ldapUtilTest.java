@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.is;
 import com.unboundid.ldap.sdk.LDAPException;
 import com.unboundid.ldif.LDIFException;
 import java.util.Optional;
+import ldap.server.EmbeddedLdap;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,15 +21,13 @@ import security.library.ldap.UserInformation;
 public class ldapUtilTest
 {
     private static final String LDAP_SERVER = "localhost";
-    private static final int LDAP_SERVER_PORT=  8888;
-    private static final String BASE_DN = "dc=rest,dc=com";
 
-    private LdapUtil testInstance = new LdapUtil(LDAP_SERVER, BASE_DN, LDAP_SERVER_PORT);
+    private LdapUtil testInstance = new LdapUtil(LDAP_SERVER, EmbeddedLdap.BASE_DN, EmbeddedLdap.SERVER_PORT);
 
     @Before
     public void setup() throws LDAPException, LDIFException
     {
-        EmbeddedLdap.startServer(BASE_DN, LDAP_SERVER_PORT);
+        EmbeddedLdap.startServer();
     }
 
     @After
@@ -48,14 +47,14 @@ public class ldapUtilTest
     @Test
     public void getUserInformationWithValidUser() throws Exception
     {
-        Optional<UserInformation> user = testInstance.getUserInformation("dcgonzalez");
+        Optional<UserInformation> user = testInstance.getUserInformation("dcgonzalez", "webapp1");
         assertThat(user.isPresent(), is(true));
     }
 
     @Test
     public void getUserInformationWithInvalidUser() throws Exception
     {
-        Optional<UserInformation> user = testInstance.getUserInformation("dcgonzalezz");
+        Optional<UserInformation> user = testInstance.getUserInformation("dcgonzalezz", "webapp1");
         assertThat(user.isPresent(), is(false));
     }
 }

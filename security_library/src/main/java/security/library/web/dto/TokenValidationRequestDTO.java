@@ -14,4 +14,5 @@ import lombok.NoArgsConstructor;
 public class TokenValidationRequestDTO
 {
     private String token;
+    private String application;
 }

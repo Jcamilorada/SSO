@@ -28,6 +28,7 @@ import security.library.web.services.RemoteSecurityService;
 public class SecurityFilter implements Filter
 {
     public static final String LOGGING_APPLICATION_PROPERTY = "LOGIN_WEB_APP";
+    public static final String APPLICATION_PROPERTY = "APPLICATION_NAME";
     public static final String VALIDATE_URL_PROPERTY = "VALIDATE_TOKEN_URL";
 
     public static final String SECURITY_COOKIE = "SECURITY_COOKIE";
@@ -36,12 +37,14 @@ public class SecurityFilter implements Filter
     private RemoteSecurityService securityService;
     private String loggingApplicationUrl;
     private String validationUrl;
+    private String application;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException
     {
         loggingApplicationUrl = filterConfig.getInitParameter(LOGGING_APPLICATION_PROPERTY);
         validationUrl = filterConfig.getInitParameter(VALIDATE_URL_PROPERTY);
+        application = filterConfig.getInitParameter(APPLICATION_PROPERTY);
 
         securityService = new RemoteSecurityService(validationUrl);
     }
@@ -56,7 +59,7 @@ public class SecurityFilter implements Filter
 
         if (token.isPresent())
         {
-            Optional<SecurityUserDTO> securityUser = securityService.getSecurityUser(token.get().getValue());
+            Optional<SecurityUserDTO> securityUser = securityService.getSecurityUser(token.get().getValue(), application);
 
             if (securityUser.isPresent())
             {

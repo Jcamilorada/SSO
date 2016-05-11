@@ -62,7 +62,8 @@ class SecurityResource
     public @ResponseBody
     SecurityUserDTO getUserInformation(@RequestBody TokenValidationRequestDTO requestDTO)
     {
-        Optional<UserInformation> userInformation = securityService.validateToken(requestDTO.getToken());
+        Optional<UserInformation> userInformation =
+                securityService.validateToken(requestDTO.getToken(), requestDTO.getApplication());
 
         if (userInformation.isPresent())
         {
@@ -70,6 +71,7 @@ class SecurityResource
             securityUserDTO.setEmail(userInformation.get().getEmail());
             securityUserDTO.setName(userInformation.get().getName());
             securityUserDTO.setUsername(userInformation.get().getUsername());
+            securityUserDTO.setRoles(userInformation.get().getRoles());
 
             return securityUserDTO;
         }
