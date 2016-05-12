@@ -2,8 +2,7 @@ package security.rest.rest.resources;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.util.Optional;
 import org.junit.Test;
@@ -11,14 +10,15 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import security.library.ldap.UserInformation;
 import security.library.web.dto.LoginRequestDTO;
+import security.library.web.dto.LoginResponseDTO;
 import security.library.web.dto.LogoutRequestDTO;
 import security.library.web.dto.SecurityUserDTO;
 import security.library.web.dto.TokenValidationRequestDTO;
-import security.library.web.dto.LoginResponseDTO;
 import security.rest.rest.common.exception.InvalidCredentialsException;
+import security.rest.rest.mappers.SecurityUserMapper;
 import security.rest.services.security.SecurityService;
+import security.rest.services.security.ldap.UserInformation;
 
 
 /**
@@ -35,6 +35,7 @@ public class SecurityResourceTest
     private String application = "application";
 
     @Mock private SecurityService securityService;
+    @Mock private SecurityUserMapper securityUserMapper;
 
     @InjectMocks private SecurityResource testInstance;
 
@@ -55,9 +56,20 @@ public class SecurityResourceTest
     }
 
     @Test
-    public void testLogout() throws Exception
+    public void testLogoutWhenIsValid() throws Exception
     {
         LogoutRequestDTO loginRequestDTO = new LogoutRequestDTO(token);
+        when(securityService.invalidateToken(token)).thenReturn(true);
+
+        testInstance.logout(loginRequestDTO);
+        verify(securityService).invalidateToken(token);
+    }
+
+    @Test(expected = InvalidCredentialsException.class)
+    public void testLogoutWhenIsInvalid() throws Exception
+    {
+        LogoutRequestDTO loginRequestDTO = new LogoutRequestDTO(token);
+        when(securityService.invalidateToken(token)).thenReturn(false);
 
         testInstance.logout(loginRequestDTO);
         verify(securityService).invalidateToken(token);
@@ -68,18 +80,17 @@ public class SecurityResourceTest
     {
         TokenValidationRequestDTO tokenValidationRequestDTO = new TokenValidationRequestDTO(token, application);
         UserInformation userInformation = new UserInformation();
+        SecurityUserDTO securityUserDTO = new SecurityUserDTO();
 
         when(securityService.validateToken(token, application)).thenReturn(Optional.of(userInformation));
+        when(securityUserMapper.getSecurityUserDTO(userInformation)).thenReturn(securityUserDTO);
         SecurityUserDTO result = testInstance.getUserInformation(tokenValidationRequestDTO);
 
-        assertThat(result.getName(), is(userInformation.getName()));
-        assertThat(result.getEmail(), is(userInformation.getEmail()));
-        assertThat(result.getRoles(), is(userInformation.getRoles()));
-        assertThat(result.getUsername(), is(userInformation.getUsername()));
+        assertThat(result, is(securityUserDTO));
     }
 
     @Test(expected = InvalidCredentialsException.class)
-    public void testHetUserInformationWhenInValid() throws Exception
+    public void testGetUserInformationWhenInValid() throws Exception
     {
         TokenValidationRequestDTO tokenValidationRequestDTO = new TokenValidationRequestDTO(token, application);
 

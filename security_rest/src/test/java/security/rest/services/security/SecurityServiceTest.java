@@ -2,8 +2,7 @@ package security.rest.services.security;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.util.Optional;
 import org.junit.Test;
@@ -11,8 +10,8 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import security.library.ldap.UserInformation;
 import security.rest.services.security.ldap.LdapUtil;
+import security.rest.services.security.ldap.UserInformation;
 import security.rest.services.security.token.TokenService;
 
 /**
@@ -71,10 +70,20 @@ public class SecurityServiceTest
     }
 
     @Test
-    public void invalidateToken() throws Exception
+    public void invalidateTokenWhenIsValid() throws Exception
     {
-        testInstance.invalidateToken(token);
+        when(tokenService.getSecurityUserFromToken(token)).thenReturn(Optional.of(user));
+
+        assertThat(testInstance.invalidateToken(token), is(true));
         verify(tokenService).invalidateAll(token);
     }
 
+    @Test
+    public void invalidateTokenWhenIsNotValid() throws Exception
+    {
+        when(tokenService.getSecurityUserFromToken(token)).thenReturn(Optional.empty());
+
+        assertThat(testInstance.invalidateToken(token), is(false));
+        verify(tokenService, never()).invalidateAll(token);
+    }
 }

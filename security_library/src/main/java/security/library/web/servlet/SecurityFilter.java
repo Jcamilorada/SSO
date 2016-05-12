@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
 import lombok.Getter;
-import security.library.web.common.HttpUtil;
+import security.library.web.common.HttpUtils;
 import security.library.web.dto.SecurityUserDTO;
 import security.library.web.services.RemoteSecurityService;
 
@@ -55,11 +55,16 @@ public class SecurityFilter implements Filter
         HttpServletRequest servletRequest = (HttpServletRequest)request;
         HttpServletResponse httpResponse = (HttpServletResponse)response;
 
-        Optional<Cookie> token = HttpUtil.getCookie(servletRequest.getCookies(), SECURITY_COOKIE);
+        if (shouldExclude(servletRequest))
+        {
+            chain.doFilter(servletRequest, response);
+        }
+
+        Optional<Cookie> token = HttpUtils.getCookie(servletRequest.getCookies(), SECURITY_COOKIE);
 
         if (token.isPresent())
         {
-            Optional<SecurityUserDTO> securityUser = securityService.getSecurityUser(token.get().getValue(), application);
+            Optional<SecurityUserDTO> securityUser = securityService.getSecurityUser(token.get().getValue(), getApplication());
 
             if (securityUser.isPresent())
             {
@@ -71,7 +76,8 @@ public class SecurityFilter implements Filter
         else
         {
             String url = servletRequest.getRequestURL().toString();
-            httpResponse.sendRedirect(String.format("%s?redirectUrl=%s", getLoggingApplicationUrl(), url));
+            httpResponse.sendRedirect(
+                String.format("%s?redirectUrl=%s", getLoggingApplicationUrl(), url));
         }
     }
 
@@ -79,5 +85,12 @@ public class SecurityFilter implements Filter
     public void destroy()
     {
 
+    }
+
+    private boolean shouldExclude(HttpServletRequest request)
+    {
+        String requestUri = request.getRequestURI();
+
+        return requestUri.endsWith(".css") || requestUri.endsWith(".js");
     }
 }

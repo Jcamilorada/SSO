@@ -40,8 +40,8 @@ public class RemoteSecurityService
 
     RemoteSecurityService(String securityServerUrl, RestTemplate restTemplate)
     {
-        this.securityServerUrl = securityServerUrl;
-        this.restTemplate = restTemplate;
+        this.securityServerUrl = Preconditions.checkNotNull(securityServerUrl);
+        this.restTemplate = Preconditions.checkNotNull(restTemplate);
     }
 
     /**
@@ -61,9 +61,12 @@ public class RemoteSecurityService
 
         try
         {
-            userDTO = Optional.of(restTemplate.postForObject(
+            TokenValidationRequestDTO requestDTO = new TokenValidationRequestDTO(token, application);
+
+            userDTO = Optional.of(
+                restTemplate.postForObject(
                     securityServerUrl + VALIDATE_PATH,
-                    new TokenValidationRequestDTO(token, application),
+                    requestDTO,
                     SecurityUserDTO.class));
         }
 
@@ -93,8 +96,9 @@ public class RemoteSecurityService
 
         try
         {
+            LoginRequestDTO requestDTO = new LoginRequestDTO(username, password);
             loginResponseDTO = restTemplate.postForObject(
-                    securityServerUrl + LOGIN_PATH, new LoginRequestDTO(username, password), LoginResponseDTO.class);
+                    securityServerUrl + LOGIN_PATH, requestDTO, LoginResponseDTO.class);
             loginResponseDTO.setValid(true);
         }
 

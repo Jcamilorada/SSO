@@ -1,7 +1,9 @@
 rootProject.name = 'rest'
-include 'ldap_server'
 include 'security_library'
+include 'ldap_server'
 include 'security_rest'
-include 'webapp1'
 include 'security_webapp'
+include 'webapp1'
+include 'webapp2'
+
 

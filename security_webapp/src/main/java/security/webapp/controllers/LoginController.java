@@ -2,7 +2,6 @@ package security.webapp.controllers;
 
 
 import java.util.Map;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,7 +10,9 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import security.library.web.common.HttpUtils;
 import security.library.web.dto.LoginResponseDTO;
+import security.library.web.dto.LogoutResponseDTO;
 import security.library.web.services.RemoteSecurityService;
 import security.library.web.servlet.SecurityFilter;
 
@@ -33,7 +34,7 @@ public class LoginController
     }
 
     @RequestMapping("/")
-    public String login(
+    public String index(
             Map<String, Object> model,
             @RequestParam(value = "redirectUrl", required = false) String redirectUrl)
     {
@@ -52,16 +53,16 @@ public class LoginController
         String view = "login";
 
         LoginResponseDTO responseDTO = remoteSecurityService.login(username, password);
+        model.put("hasErrors", responseDTO.isValid());
 
         if (responseDTO.isValid())
         {
-            response.addCookie(createCookie(responseDTO.getToken()));
+            response.addCookie(HttpUtils.createSecurityCookie(responseDTO.getToken()));
             view = String.format("redirect:%s", redirectUrl);
         }
 
         else
         {
-
             model.put("error", "Invalid user or pasword");
             model.put("RedirectUrl", redirectUrl);
         }
@@ -74,26 +75,12 @@ public class LoginController
     public String logout(
             Map<String, Object> model,
             @RequestParam("redirectUrl") String redirectUrl,
-            @CookieValue("SECURITY_TOKEN") String token,
+            @CookieValue(SecurityFilter.SECURITY_COOKIE) String token,
             HttpServletResponse response)
     {
-        Cookie cookie = new Cookie(SecurityFilter.SECURITY_COOKIE, "");
-        cookie.setMaxAge(0);
-        response.addCookie(cookie);
-
-        remoteSecurityService.logout(token);
+        LogoutResponseDTO logoutResponseDTO = remoteSecurityService.logout(token);
+        HttpUtils.invalidateSecurityCookie(response);
         model.put("RedirectUrl", redirectUrl);
         return "login";
     }
-
-
-    private Cookie createCookie(String token)
-    {
-        Cookie cookie = new Cookie(SecurityFilter.SECURITY_COOKIE, token);
-        cookie.setDomain(".app.localhost");
-        cookie.setPath("/");
-
-        return cookie;
-    }
-
 }

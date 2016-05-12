@@ -64,8 +64,8 @@ class TokenHelper
         {
             byte[] bytesUsuario = convertirDeBase64(parts[0]);
             byte[] bytesHash = convertirDeBase64(parts[1]);
-            boolean hashValido = Arrays.equals(crearHmac(bytesUsuario), bytesHash);
-            if (hashValido)
+            boolean isValidHash = Arrays.equals(crearHmac(bytesUsuario), bytesHash);
+            if (isValidHash)
             {
                 usuario = usuario.of(new String(bytesUsuario));
             }

@@ -70,22 +70,12 @@ public class TokenServiceTest
     }
 
     @Test
-    public void testInvalidateAllWhenTokenDoesNotExist() throws Exception
-    {
-        testInstance = spy(testInstance);
-        doReturn(Optional.empty()).when(testInstance).getSecurityUserFromToken(token);
-
-        testInstance.invalidateAll(token);
-        verifyZeroInteractions(tokenRepository);
-    }
-
-    @Test
     public void testInvalidateAllWhenTokenExist() throws Exception
     {
         testInstance = spy(testInstance);
         doReturn(Optional.of(user)).when(testInstance).getSecurityUserFromToken(token);
 
-        testInstance.invalidateAll(token);
+        testInstance.invalidateAll(user);
         verify(tokenRepository).invalidateByUser(user);
     }
 }

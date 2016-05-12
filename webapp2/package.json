@@ -1,0 +1,22 @@
+{
+  "name": "webapp2",
+  "version": "1.0.0",
+  "description": "Single page application 1",
+  "author": "Juan Camilo Rada",
+  "license": "ISC",
+  "scripts": {
+    "build": "grunt build"
+  },
+  "devDependencies": {
+    "grunt-cli": "^0.1.13",
+    "grunt-angular-templates": "^0.5.7",
+    "grunt-bower-task": "^0.4.0",
+    "grunt-contrib-clean": "^0.6.0",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-contrib-cssmin": "^0.12.3",
+    "grunt-contrib-jshint": "^0.11.2",
+    "grunt-contrib-uglify": "^0.9.1",
+    "grunt-ng-annotate": "^1.0.1",
+    "load-grunt-tasks": "^3.2.0"
+  }
+}

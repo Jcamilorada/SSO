@@ -8,14 +8,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import security.library.ldap.UserInformation;
 import security.library.web.dto.LoginRequestDTO;
+import security.library.web.dto.LoginResponseDTO;
 import security.library.web.dto.LogoutRequestDTO;
 import security.library.web.dto.SecurityUserDTO;
 import security.library.web.dto.TokenValidationRequestDTO;
-import security.library.web.dto.LoginResponseDTO;
 import security.rest.rest.common.exception.InvalidCredentialsException;
+import security.rest.rest.mappers.SecurityUserMapper;
 import security.rest.services.security.SecurityService;
+import security.rest.services.security.ldap.UserInformation;
 
 
 /**
@@ -29,13 +30,16 @@ import security.rest.services.security.SecurityService;
 class SecurityResource
 {
     private static final String INVALID_CREDENTIALS_ERROR = "Invalid username or password";
+    private static final String INVALID_TOKEN_ERROR = "Invalid security token";
 
     private final SecurityService securityService;
+    private final SecurityUserMapper securityUserMapper;
 
     @Autowired
-    public SecurityResource(SecurityService securityService)
+    public SecurityResource(SecurityService securityService, SecurityUserMapper securityUserMapper)
     {
         this.securityService = Preconditions.checkNotNull(securityService);
+        this.securityUserMapper = Preconditions.checkNotNull(securityUserMapper);
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
@@ -55,7 +59,10 @@ class SecurityResource
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
     public void logout(@RequestBody LogoutRequestDTO requestDTO)
     {
-        securityService.invalidateToken(requestDTO.getToken());
+        if (!securityService.invalidateToken(requestDTO.getToken()))
+        {
+            throw new InvalidCredentialsException(INVALID_TOKEN_ERROR);
+        }
     }
 
     @RequestMapping(value = "/validate", method = RequestMethod.POST)
@@ -67,11 +74,8 @@ class SecurityResource
 
         if (userInformation.isPresent())
         {
-            SecurityUserDTO securityUserDTO = new SecurityUserDTO();
-            securityUserDTO.setEmail(userInformation.get().getEmail());
-            securityUserDTO.setName(userInformation.get().getName());
-            securityUserDTO.setUsername(userInformation.get().getUsername());
-            securityUserDTO.setRoles(userInformation.get().getRoles());
+            SecurityUserDTO securityUserDTO =
+                securityUserMapper.getSecurityUserDTO(userInformation.get());
 
             return securityUserDTO;
         }

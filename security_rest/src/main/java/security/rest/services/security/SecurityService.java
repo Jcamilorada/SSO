@@ -4,12 +4,12 @@ import com.google.common.base.Preconditions;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import security.library.ldap.UserInformation;
 import security.rest.services.security.ldap.LdapUtil;
+import security.rest.services.security.ldap.UserInformation;
 import security.rest.services.security.token.TokenService;
 
 /**
- *  Security Service, provides usefull methods for integrated ldap and security token.
+ *  Security Service, provides useful methods for integrated ldap and security token.
  *
  * @author Juan Rada
  */
@@ -67,8 +67,21 @@ public class SecurityService
         return userInformation;
     }
 
-    public void invalidateToken(String token)
+    /**
+     * Search the user of the given security token and invalidate all register security tokens.
+     *
+     * @param token the string representation of the security token.
+     *
+     * @return true if token was valid otherwise false.
+     */
+    public boolean invalidateToken(String token)
     {
-        tokenService.invalidateAll(token);
+        Optional<String> user = tokenService.getSecurityUserFromToken(token);
+        if (user.isPresent())
+        {
+            tokenService.invalidateAll(token);
+        }
+
+        return user.isPresent();
     }
 }

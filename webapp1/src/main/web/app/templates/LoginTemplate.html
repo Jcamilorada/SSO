@@ -11,6 +11,10 @@
                         {{vm.user.username}}
                     </small>
                     <p><i class="glyphicon glyphicon-envelope"></i>{{vm.user.email}}</p>
+                    <h4>Roles</h4>
+                    <div ng-repeat="r in vm.user.roles">
+                        <p>{{r}}</p>
+                    </div>
                     <p>
                         <a href="logout" type="button" class="btn btn-default btn-sm">
                             <span class="glyphicon glyphicon-log-out"></span> Log out

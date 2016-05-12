@@ -1,4 +1,4 @@
-package security.library.ldap;
+package security.rest.services.security.ldap;
 
 import java.util.Set;
 import lombok.AllArgsConstructor;
@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 @Data @AllArgsConstructor @NoArgsConstructor
 public class UserInformation
 {
+    private String dn;
     private String name;
     private String username;
     private String email;

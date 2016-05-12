@@ -60,12 +60,8 @@ public class TokenService
     }
 
     @Transactional
-    public void invalidateAll(String token)
+    public void invalidateAll(String user)
     {
-        Optional<String> user = getSecurityUserFromToken(token);
-        if (user.isPresent())
-        {
-            dbTokenRepository.invalidateByUser(user.get());
-        }
+        dbTokenRepository.invalidateByUser(user);
     }
 }

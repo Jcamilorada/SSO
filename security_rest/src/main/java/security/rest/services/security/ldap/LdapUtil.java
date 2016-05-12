@@ -23,7 +23,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import security.library.ldap.UserInformation;
 
 /**
  * Ldap helper class. Provides useful methods to query configured ldap service.
@@ -112,7 +111,7 @@ public class LdapUtil
                 String dn = String.format("dn:%s", user.getDN());
                 Set<String> roles = getUserApplicationRoles(ldapConnection, dn, application);
 
-                userInformation = Optional.of(new UserInformation(username, name, email, roles));
+                userInformation = Optional.of(new UserInformation(dn, username, name, email, roles));
             }
         }
 

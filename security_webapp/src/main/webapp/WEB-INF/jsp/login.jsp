@@ -1,3 +1,4 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,16 +17,18 @@
             <h3 class="form-signin-heading">Please Sign In</h3>
             <hr class="colorgraph">
             <br>
-            <input type="text" value="dcgonzalez" class="form-control" name="Username" placeholder="Username" required="true" autofocus="true"/>
-            <input type="password" value="dcga123" class="form-control" name="Password" placeholder="Password" required="true"/>
+            <input type="text" class="form-control" name="Username" placeholder="Username" required="true" autofocus="true"/>
+            <input type="password" class="form-control" name="Password" placeholder="Password" required="true"/>
             <input type="hidden" name="RedirectUrl" value="${RedirectUrl}" />
             <button type="submit" class="btn btn-lg btn-primary btn-block" name="Submit" value="Login">Login</button>
 
-            <br>
-            <div class="alert alert-danger" role="alert">
-              <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-              <span class="sr-only">Error:</span>${error}
-            </div>
+            <c:if test="${hasErrors}">
+                <br>
+                <div class="alert alert-danger" role="alert">
+                  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                  <span class="sr-only">Error:</span>${error}
+                </div>
+            </c:if>
         </form>
     </div>
 </div>

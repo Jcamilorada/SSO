@@ -10,7 +10,6 @@ import ldap.server.EmbeddedLdap;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import security.library.ldap.UserInformation;
 
 /**
  * Test suite for {@link LdapUtil} test class use a in memory ldap server with mock data to validate operations.

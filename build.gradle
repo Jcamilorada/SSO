@@ -1,3 +1,14 @@
 task wrapper(type: Wrapper) {
     gradleVersion = '2.12'
 }
+
+
+task build() {
+    println "building application systems"
+    dependsOn ':security_library:build'
+    dependsOn ':ldap_server:build'
+    dependsOn ':security_rest:build'
+    dependsOn ':security_webapp:build'
+    dependsOn ':webapp1:build'
+    dependsOn ':webapp2:build'
+}
