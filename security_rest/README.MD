@@ -2,6 +2,11 @@
 
 Contains security rest service.
 
+gradle commands
+---------------
+* build (compile project)
+* booRun (run standalone server)
+
 ## 1. Login
 Rest service that enable creation of logging request. If success retrieve security token.
 

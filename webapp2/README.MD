@@ -1,4 +1,6 @@
-Single page application using Angular/Grunt
+# Single page application using Angular/Grunt
 
-1. npm install
-1. npm run-script build
+gradle commands
+---------------
+* build (compile project)
+* booRun (run standalone server)

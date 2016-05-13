@@ -22,7 +22,7 @@ class TokenHelper
 {
     private static final String TOKEN_SEPARATOR = ".";
     private static final String SECURITY_ALGORITHM = "HmacSHA256";
-    private final Mac algoritmoMac;
+    private final Mac mac;
 
     static final String TOKEN_SPLITTER = "\\.";
 
@@ -33,8 +33,8 @@ class TokenHelper
 
         try
         {
-            algoritmoMac = Mac.getInstance(SECURITY_ALGORITHM);
-            algoritmoMac.init(new SecretKeySpec(salt, SECURITY_ALGORITHM));
+            mac = Mac.getInstance(SECURITY_ALGORITHM);
+            mac.init(new SecretKeySpec(salt, SECURITY_ALGORITHM));
         }
 
         catch (NoSuchAlgorithmException | InvalidKeyException ex)
@@ -47,10 +47,10 @@ class TokenHelper
     {
         Preconditions.checkNotNull(tokenId);
 
-        byte[] bytesUsuario = tokenId.getBytes();
-        byte[] hash = crearHmac(bytesUsuario);
+        byte[] bytesTokenId = tokenId.getBytes();
+        byte[] hash = getHmac(bytesTokenId);
 
-        return convertirABase64(bytesUsuario) + TOKEN_SEPARATOR + convertirABase64(hash);
+        return toBase64(bytesTokenId) + TOKEN_SEPARATOR + toBase64(hash);
     }
 
     public Optional<String> getTokenIdFromToken(final String token)
@@ -58,36 +58,36 @@ class TokenHelper
         Preconditions.checkNotNull(token);
 
         String[] parts = token.split(TOKEN_SPLITTER);
-        Optional<String> usuario = Optional.empty();
+        Optional<String> tokenId = Optional.empty();
 
         if (parts.length == 2 && parts[0].length() > 0 && parts[1].length() > 0)
         {
-            byte[] bytesUsuario = convertirDeBase64(parts[0]);
-            byte[] bytesHash = convertirDeBase64(parts[1]);
-            boolean isValidHash = Arrays.equals(crearHmac(bytesUsuario), bytesHash);
+            byte[] tokenIdPart = fromBase64(parts[0]);
+            byte[] bytesHash = fromBase64(parts[1]);
+            boolean isValidHash = Arrays.equals(getHmac(tokenIdPart), bytesHash);
             if (isValidHash)
             {
-                usuario = usuario.of(new String(bytesUsuario));
+                tokenId = tokenId.of(new String(tokenIdPart));
             }
         }
 
-        return usuario;
+        return tokenId;
     }
 
 
-    private byte[] crearHmac(final byte[] datos)
+    private byte[] getHmac(final byte[] data)
     {
-        return algoritmoMac.doFinal(datos);
+        return mac.doFinal(data);
     }
 
-    private String convertirABase64(final byte[] datos)
+    private String toBase64(final byte[] data)
     {
-        return DatatypeConverter.printBase64Binary(datos);
+        return DatatypeConverter.printBase64Binary(data);
     }
 
-    private byte[] convertirDeBase64(final String datos)
+    private byte[] fromBase64(final String data)
     {
-        return DatatypeConverter.parseBase64Binary(datos);
+        return DatatypeConverter.parseBase64Binary(data);
     }
 }
 
